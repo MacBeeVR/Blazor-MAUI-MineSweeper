@@ -1,0 +1,66 @@
+﻿@page "/game/{gridSize:int}/{minePercentage:int}"
+@inject NavigationManager   _NavManager
+@inject IGameManager        _GameManager
+
+@if (_GameManager.GetInitialized())
+{
+    <div class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
+        @for (var y = 0; y < GridSize; y++)
+        {
+            <div class="d-flex flex-row justify-content-center align-items-center top-50 bottom-50">
+                @for (var x = 0; x < GridSize; x++)
+                {
+                    var data = _GameManager.GetCell(x, y);
+                    <MineSweeperCell Data="data" OnClick="(evt) => OnCellClicked(data)" />
+                }
+            </div>
+        }
+    </div>
+
+    <Dialog Title="Game Over!" Opened="_GameManager.GetGameOver()">
+        <BodyContent>
+            @{ var endGameText = _GameManager.GetGameWon() ? "You Win!" : "You Lose!"; }
+            <p class="d-flex flex-column justify-content-center align-items-center">@endGameText</p>
+        </BodyContent>
+        <FooterContent>
+            <div class="d-flex flex-row justify-content-center align-items-center">
+                <button class="btn btn-primary m-3"     @onclick=OnReturnButtonClicked  >Return </button>
+                <button class="btn btn-secondary"       @onclick=OnRetryButtonClicked   >Retry  </button>
+            </div>
+        </FooterContent>
+    </Dialog>
+}
+
+@code {
+    [Parameter] public int GridSize         { get; set; }
+    [Parameter] public int MinePercentage   { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _GameManager.InitializeGame(GridSize, MinePercentage);
+            StateHasChanged();
+        }
+    }
+
+    #region Click Events
+    private async Task OnCellClicked(CellData cell)
+    {
+        await Task.Delay(250);
+        _GameManager.SelectCell(cell);
+    } 
+
+    private void OnReturnButtonClicked()
+        => _NavManager.NavigateTo("/");
+
+    private async void OnRetryButtonClicked()
+    {
+        var gameStateTask = _GameManager.ResetGameStateAsync();
+        StateHasChanged();
+        await gameStateTask;
+        StateHasChanged();
+    }
+
+    #endregion
+}

@@ -1,0 +1,42 @@
+﻿
+@if (Opened)
+{
+    <div class="overlay">
+        <div class="dialog">
+            <div class="dialog-header">
+                <div> 
+                    <h2>@Title</h2>
+                </div>
+
+                <div @onclick=CloseDialog>
+                    <div class="close">
+                        <i class="bi bi-x-lg"> </i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialog-body">
+                @BodyContent
+            </div>
+
+            <div class="dialog-footer">
+                @FooterContent
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string?          Title               { get; set; }
+    [Parameter] public RenderFragment?  BodyContent         { get; set; }
+    [Parameter] public RenderFragment?  FooterContent       { get; set; }
+    [Parameter] public bool             Opened              { get; set; }
+    [Parameter] public EventCallback    CloseButtonClicked  { get; set; }
+
+    private void CloseDialog()
+    {
+        Opened = false;
+        if (CloseButtonClicked.HasDelegate)
+            CloseButtonClicked.InvokeAsync();
+    }
+}

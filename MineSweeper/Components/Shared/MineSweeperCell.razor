@@ -1,0 +1,38 @@
+﻿
+<div class="minesweeper-cell @(wasLeftClicked ? "clicked" : string.Empty)" 
+    @onclick=OnCellClicked 
+    @oncontextmenu=OnCellClicked 
+    @oncontextmenu:preventDefault="true">
+
+    @if     (wasLeftClicked && Data.HasMine)    { <p>&#128163;                      </p> } @* Display Bomb Unicode *@
+    else if (wasLeftClicked)                    { <p>@Data.NeighborMineCount        </p> } @* Display Neighbor Mine Count *@
+    else if (wasRightClicked)                   { <p style="color: red">&#9872;   </p> } @* Display Flag Unicode *@
+</div>
+
+@code {
+    [Parameter] public CellData         Data        { get; set; }
+    [Parameter] public EventCallback    OnClick     { get; set; }
+    [Parameter] public EventCallback    OnExplosion { get; set; }
+
+    private bool wasLeftClicked     = false;
+    private bool wasRightClicked    = false;
+
+    private async Task OnCellClicked(MouseEventArgs args)
+    {
+        // If Cell not already clicked...
+        if (!wasLeftClicked)
+        {
+            // Handle Left Click
+            if (args.Button == 0)
+            {
+                wasLeftClicked  = true;
+                wasRightClicked = false;
+                await OnClick.InvokeAsync();
+            }
+            // Handle Right Click
+            else if (args.Button == 2) 
+                wasRightClicked = !wasRightClicked;
+        }
+        
+    }
+}

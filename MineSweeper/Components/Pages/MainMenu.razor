@@ -1,0 +1,28 @@
+﻿@page "/"
+@inject NavigationManager _NavManager
+
+<div class="settings-container">
+    <h1>
+        Minesweeper
+    </h1>
+    <div class="game-setting">
+        <label>Grid Size</label>
+        <input type="number" @bind-value="GridSize" class="settings-input" />
+    </div>
+    <div class="game-setting">
+        <label>Mine Percentage</label>
+        <input type="number" @bind-value="MinePercentage" class="settings-input" />
+    </div>
+    <div class="game-setting">
+        <button class="btn btn-primary play-button" @onclick=OnPlayButtonClicked>Play!</button>
+    </div>
+</div>
+
+@code {
+    private int GridSize        = 15;
+    private int MinePercentage  = 15;
+
+    private void OnPlayButtonClicked(MouseEventArgs args)
+        => _NavManager.NavigateTo($"/game/{GridSize}/{MinePercentage}");
+    
+}

@@ -1,0 +1,46 @@
+﻿.settings-container {
+    top: 25%;
+    width: 20rem;
+    height: 20rem;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    border-radius: 10px;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border: 2px groove rgba(50, 50, 50, 0.25);
+    backdrop-filter: saturate(180%) blur(10px);
+}
+
+    .settings-container h1 {
+        font-weight: bold;
+        border-width: thin;
+        margin-bottom: 1.25rem;
+        border-bottom: 2px solid black;
+    }
+
+    .settings-container .game-setting {
+        display: flex;
+        margin-bottom: 1rem;
+        flex-direction: column;
+    }
+
+        .settings-container .game-setting label {
+            font-weight: bold;
+        }
+
+.settings-input {
+    border-width: 2px;
+    border-radius: 5px;
+    border-style: ridge;
+}
+
+.play-button {
+    width: 10rem;
+    height: 3rem;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 1.5rem;
+}
