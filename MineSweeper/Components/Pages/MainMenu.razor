@@ -1,28 +1,79 @@
 ﻿@page "/"
 @inject NavigationManager _NavManager
 
-<div class="settings-container">
-    <h1>
-        Minesweeper
-    </h1>
-    <div class="game-setting">
-        <label>Grid Size</label>
-        <input type="number" @bind-value="GridSize" class="settings-input" />
-    </div>
-    <div class="game-setting">
-        <label>Mine Percentage</label>
-        <input type="number" @bind-value="MinePercentage" class="settings-input" />
-    </div>
-    <div class="game-setting">
-        <button class="btn btn-primary play-button" @onclick=OnPlayButtonClicked>Play!</button>
+<div class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
+    <div class="settings-container" style="@(ShowAdvancedSettings ? "height: 25rem;" : "height: 32rem;")">
+        <h1>
+            Minesweeper
+        </h1>
+
+        @if (ShowAdvancedSettings)
+        {
+            <div class="game-setting fadeIn">
+                <label>Grid Size</label>
+                <input type="number" @bind-value="GridSize" class="settings-input" />
+            </div>
+            <div class="game-setting fadeIn">
+                <label>Mine Percentage</label>
+                <input type="number" @bind-value="MinePercentage" class="settings-input" />
+            </div>
+
+        }
+        else
+        {
+            <div class="fadeIn">
+                <h3>Select Difficulty</h3>
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Easy")'   >Easy   </button>
+                    <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Medium")' >Medium </button>
+                    <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Hard")'   >Hard   </button>
+                    <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Expert")' >Expert </button>
+                </div>
+            </div>
+        }
+
+        <div class="game-setting">
+            <button class="btn btn-primary advanced-settings" @onclick=OnAdvancedSettingsClicked>Advanced Settings</button>
+        </div>
+
+        <div class="game-setting">
+            <button class="btn btn-primary play-button" @onclick=OnPlayButtonClicked>Play!</button>
+        </div>
     </div>
 </div>
 
 @code {
-    private int GridSize        = 15;
-    private int MinePercentage  = 15;
+    private int     GridSize                = 15;
+    private int     MinePercentage          = 15;
+    private bool    ShowAdvancedSettings    = false;
 
     private void OnPlayButtonClicked(MouseEventArgs args)
         => _NavManager.NavigateTo($"/game/{GridSize}/{MinePercentage}");
-    
+
+    private void OnAdvancedSettingsClicked(MouseEventArgs args)
+        => ShowAdvancedSettings = !ShowAdvancedSettings;
+
+    private void OnDifficultySelected(string difficulty)
+    {
+        switch (difficulty)
+        {
+            case "Easy":
+                GridSize        = 15;
+                MinePercentage  = 15;
+                break;
+            case "Medium":
+                GridSize        = 20;
+                MinePercentage  = 25;
+                break;
+            case "Hard":
+                GridSize        = 30;
+                MinePercentage  = 35;
+                break;
+            case "Expert":
+                GridSize        = 40;
+                MinePercentage  = 50;
+                break;
+        }
+    }
+
 }

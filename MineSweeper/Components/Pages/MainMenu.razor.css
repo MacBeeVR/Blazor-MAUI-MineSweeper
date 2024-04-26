@@ -1,7 +1,20 @@
-﻿.settings-container {
-    top: 25%;
+﻿@keyframes fadeIn {
+    0%      { opacity: 0; }
+    100%    { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    0%      { opacity: 1; }
+    100%    { opacity: 0; }
+}
+
+.fadeIn {
+    animation-name: fadeIn;
+    animation-duration: 0.25s;
+}
+
+.settings-container {
     width: 20rem;
-    height: 20rem;
     display: flex;
     margin-left: auto;
     margin-right: auto;
@@ -10,6 +23,7 @@
     align-items: center;
     flex-direction: column;
     justify-content: center;
+    transition: height ease-out 0.1s;
     border: 2px groove rgba(50, 50, 50, 0.25);
     backdrop-filter: saturate(180%) blur(10px);
 }
@@ -37,10 +51,17 @@
     border-style: ridge;
 }
 
-.play-button {
-    width: 10rem;
+.play-button,
+.advanced-settings {
+    width: 15rem;
     height: 3rem;
     font-size: 22px;
     font-weight: bold;
     margin-top: 1.5rem;
+}
+
+.difficulty-button {
+    width: 5rem;
+    height: 2rem;
+    margin-top: 1rem;
 }
