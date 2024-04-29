@@ -2,13 +2,17 @@
 @inject NavigationManager _NavManager
 
 <div class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
-    <div class="settings-container" style="@(ShowAdvancedSettings ? "height: 28rem;" : "height: 35rem;")">
-        <h1>
-            Minesweeper
-        </h1>
-
-        @if (ShowAdvancedSettings)
+    <div class="settings-container" style="@(ShowCustomDifficulty ? "height: 30rem;" : "height: 35rem;")">
+        @if (ShowCustomDifficulty)
         {
+            <h1 class="fadeIn">
+                Minesweeper
+            </h1>
+
+            <h3 class="fadeIn">
+                Custom Difficulty
+            </h3>
+
             <div class="game-setting fadeIn">
                 <label>Grid Size</label>
                 <input type="number" @bind-value="GridSize" class="settings-input" />
@@ -17,32 +21,34 @@
                 <label>Mine Percentage</label>
                 <input type="number" @bind-value="MinePercentage" class="settings-input" />
             </div>
-
-            <div class="d-flex flex-row justify-content-center align-items-center mt-3 fadeIn">
-                <label style="margin-right: 1rem;">Easy Mode</label>
-                <InputCheckbox DisplayName="EasyMode" @bind-Value=EasyMode />
-            </div>
         }
         else
         {
-            <div class="fadeIn">
-                <h3>Select Difficulty</h3>
-                <div class="d-flex flex-column justify-content-center align-items-center">
-                    <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Easy")'   >Easy   </button>
-                    <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Medium")' >Medium </button>
-                    <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Hard")'   >Hard   </button>
-                    <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Expert")' >Expert </button>
-                </div>
-            </div>
+            <h1 class="fadeIn">
+                Minesweeper
+            </h1>
 
-            <div class="d-flex flex-row justify-content-center align-items-center mt-3 fadeIn">
-                <label style="margin-right: 1rem;">Easy Mode</label>
-                <InputCheckbox DisplayName="EasyMode" @bind-Value=EasyMode />
+            <div class="fadeIn">
+                <h3>
+                    Select Difficulty
+                </h3>
+
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                    <button class="btn @(EasySelected   ? "btn-primary" : "btn-secondary") difficulty-button" @onclick='() => OnDifficultySelected("Easy")'   >Easy   </button>
+                    <button class="btn @(MediumSelected ? "btn-primary" : "btn-secondary") difficulty-button" @onclick='() => OnDifficultySelected("Medium")'>Medium </button>
+                    <button class="btn @(HardSelected   ? "btn-primary" : "btn-secondary") difficulty-button" @onclick='() => OnDifficultySelected("Hard")'>Hard   </button>
+                    <button class="btn @(ExpertSelected ? "btn-primary" : "btn-secondary") difficulty-button" @onclick='() => OnDifficultySelected("Expert")'>Expert </button>
+                </div>
             </div>
         }
 
+        <div class="d-flex flex-row justify-content-center align-items-center mt-3 fadeIn">
+            <label style="margin-right: 1rem;">Easy Mode</label>
+            <InputCheckbox style="width: 2rem; height: 1.5rem;" DisplayName="EasyMode" @bind-Value=EasyMode />
+        </div>
+
         <div class="game-setting">
-            <button class="btn btn-primary advanced-settings" @onclick=OnAdvancedSettingsClicked>Advanced Settings</button>
+            <button class="btn btn-primary advanced-settings" @onclick=OnCustomDifficultyClicked>Custom Difficulty</button>
         </div>
 
         <div class="game-setting">
@@ -52,38 +58,60 @@
 </div>
 
 @code {
+    // Game Settings
     private int     GridSize                = 15;
     private int     MinePercentage          = 15;
-    private bool    ShowAdvancedSettings    = false;
+    private bool    ShowCustomDifficulty    = false;
     private bool    EasyMode                = false;
+
+    // Difficulty Selection Bools
+    private bool    EasySelected            = true;
+    private bool    MediumSelected          = false;
+    private bool    HardSelected            = false;
+    private bool    ExpertSelected          = false;
 
     private void OnPlayButtonClicked(MouseEventArgs args)
         => _NavManager.NavigateTo($"/game/{GridSize}/{MinePercentage}/{EasyMode}");
 
-    private void OnAdvancedSettingsClicked(MouseEventArgs args)
-        => ShowAdvancedSettings = !ShowAdvancedSettings;
+    private void OnCustomDifficultyClicked(MouseEventArgs args)
+        => ShowCustomDifficulty = !ShowCustomDifficulty;
 
     private void OnDifficultySelected(string difficulty)
     {
+        ResetDifficultySelection();
+
         switch (difficulty)
         {
             case "Easy":
                 GridSize        = 15;
                 MinePercentage  = 15;
+                EasySelected    = true;
                 break;
             case "Medium":
                 GridSize        = 20;
                 MinePercentage  = 18;
+                MediumSelected  = true;
                 break;
             case "Hard":
                 GridSize        = 25;
                 MinePercentage  = 22;
+                HardSelected    = true;
                 break;
             case "Expert":
                 GridSize        = 30;
                 MinePercentage  = 30;
+                ExpertSelected  = true;
+                break;
+            default: 
                 break;
         }
     }
 
+    private void ResetDifficultySelection()
+    {
+        EasySelected    = false;
+        MediumSelected  = false;
+        HardSelected    = false;
+        ExpertSelected  = false;
+    }
 }
