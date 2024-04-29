@@ -2,7 +2,7 @@
 @inject NavigationManager _NavManager
 
 <div class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
-    <div class="settings-container" style="@(ShowAdvancedSettings ? "height: 25rem;" : "height: 32rem;")">
+    <div class="settings-container" style="@(ShowAdvancedSettings ? "height: 28rem;" : "height: 35rem;")">
         <h1>
             Minesweeper
         </h1>
@@ -18,6 +18,10 @@
                 <input type="number" @bind-value="MinePercentage" class="settings-input" />
             </div>
 
+            <div class="d-flex flex-row justify-content-center align-items-center mt-3 fadeIn">
+                <label style="margin-right: 1rem;">Easy Mode</label>
+                <InputCheckbox DisplayName="EasyMode" @bind-Value=EasyMode />
+            </div>
         }
         else
         {
@@ -29,6 +33,11 @@
                     <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Hard")'   >Hard   </button>
                     <button class="btn btn-secondary difficulty-button" @onclick='() => OnDifficultySelected("Expert")' >Expert </button>
                 </div>
+            </div>
+
+            <div class="d-flex flex-row justify-content-center align-items-center mt-3 fadeIn">
+                <label style="margin-right: 1rem;">Easy Mode</label>
+                <InputCheckbox DisplayName="EasyMode" @bind-Value=EasyMode />
             </div>
         }
 
@@ -46,9 +55,10 @@
     private int     GridSize                = 15;
     private int     MinePercentage          = 15;
     private bool    ShowAdvancedSettings    = false;
+    private bool    EasyMode                = false;
 
     private void OnPlayButtonClicked(MouseEventArgs args)
-        => _NavManager.NavigateTo($"/game/{GridSize}/{MinePercentage}");
+        => _NavManager.NavigateTo($"/game/{GridSize}/{MinePercentage}/{EasyMode}");
 
     private void OnAdvancedSettingsClicked(MouseEventArgs args)
         => ShowAdvancedSettings = !ShowAdvancedSettings;
@@ -63,15 +73,15 @@
                 break;
             case "Medium":
                 GridSize        = 20;
-                MinePercentage  = 25;
+                MinePercentage  = 18;
                 break;
             case "Hard":
-                GridSize        = 30;
-                MinePercentage  = 35;
+                GridSize        = 25;
+                MinePercentage  = 22;
                 break;
             case "Expert":
-                GridSize        = 40;
-                MinePercentage  = 50;
+                GridSize        = 30;
+                MinePercentage  = 30;
                 break;
         }
     }

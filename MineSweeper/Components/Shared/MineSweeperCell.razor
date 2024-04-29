@@ -17,6 +17,18 @@
     private bool wasLeftClicked     = false;
     private bool wasRightClicked    = false;
 
+    public bool WasClicked { get => wasLeftClicked; }
+
+    public void ClickCell()
+    {
+        if (!wasLeftClicked)
+        {
+            wasLeftClicked  = true;
+            wasRightClicked = false;
+            StateHasChanged();
+        }
+    }
+
     private async Task OnCellClicked(MouseEventArgs args)
     {
         // If Cell not already clicked...
@@ -33,6 +45,5 @@
             else if (args.Button == 2) 
                 wasRightClicked = !wasRightClicked;
         }
-        
     }
 }

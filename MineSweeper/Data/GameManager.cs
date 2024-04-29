@@ -14,7 +14,7 @@ namespace MineSweeper.Data
 
         void InitializeGame(int gridSize, int minePercentage);
         Task ResetGameStateAsync();
-        CellData GetCell(int x, int y);
+        CellData? GetCell(int x, int y);
         void SelectCell(CellData data);
 
         bool GetInitialized();
@@ -116,10 +116,10 @@ namespace MineSweeper.Data
         #endregion
 
         #region Cell Retrieval and Selection
-        public CellData GetCell(int x, int y)
+        public CellData? GetCell(int x, int y)
         {
-            if (x < 0 || x > GridSize || y < 0 || y > GridSize)
-                throw new IndexOutOfRangeException($"The Coordinates {{{x}, {y}}} are Outside the Range of the Grid ({GridSize}x{GridSize})");
+            if (x < 0 || x >= GridSize || y < 0 || y >= GridSize)
+                return null;
 
             return Grid[y * GridSize + x];
         }

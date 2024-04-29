@@ -1,4 +1,4 @@
-﻿@page "/game/{gridSize:int}/{minePercentage:int}"
+﻿@page "/game/{gridSize:int}/{minePercentage:int}/{easyMode:bool}"
 @inject NavigationManager   _NavManager
 @inject IGameManager        _GameManager
 
@@ -12,7 +12,7 @@
                     @for (var x = 0; x < GridSize; x++)
                     {
                         var data = _GameManager.GetCell(x, y);
-                        <MineSweeperCell Data="data" OnClick="(evt) => OnCellClicked(data)" />
+                        <MineSweeperCell @ref=_Cell Data="data" OnClick="(evt) => OnCellClicked(data)" />
                     }
                 </div>
             }
@@ -38,8 +38,12 @@
 }
 
 @code {
-    [Parameter] public int GridSize         { get; set; }
-    [Parameter] public int MinePercentage   { get; set; }
+    [Parameter] public int  GridSize            { get; set; }
+    [Parameter] public int  MinePercentage      { get; set; }
+    [Parameter] public bool EasyMode            { get; set; }
+
+    private Dictionary<CellData, MineSweeperCell>   _Cells = new();
+    public  MineSweeperCell                         _Cell { set => _Cells.Add(value.Data, value); }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -54,14 +58,54 @@
     private void OnReturnButtonClicked()
         => _NavManager.NavigateTo("/");
 
-    private async Task OnCellClicked(CellData cell)
+    /// <summary>
+    /// Cell Clicked Event Handler
+    /// </summary>
+    /// <param name="cell">
+    /// The Data for the Cell Clicked
+    /// </param>
+    private void OnCellClicked(CellData cell)
+        => ClickCell(_Cells[cell]);
+
+    // Handles Clicking and Selecting Cells and Neighbor Cells (For Easy Mode)
+    private void ClickCell(MineSweeperCell cell)
     {
-        await Task.Delay(250);
-        _GameManager.SelectCell(cell);
-    } 
+        if (cell is not null)
+        {
+            cell.ClickCell();
+            _GameManager.SelectCell(cell.Data);
 
-    
+            if (EasyMode && !cell.Data.HasMine && cell.Data.NeighborMineCount == 0)
+            {
+                var pos       = cell.Data.Position;
+                var neighbors = new CellData[8]
+                {
+                    _GameManager.GetCell(pos.X - 1, pos.Y - 1),
+                    _GameManager.GetCell(pos.X    , pos.Y - 1),
+                    _GameManager.GetCell(pos.X + 1, pos.Y - 1),
+                    _GameManager.GetCell(pos.X - 1, pos.Y    ),
+                    _GameManager.GetCell(pos.X + 1, pos.Y    ),
+                    _GameManager.GetCell(pos.X - 1, pos.Y + 1),
+                    _GameManager.GetCell(pos.X    , pos.Y + 1),
+                    _GameManager.GetCell(pos.X + 1, pos.Y + 1)
+                };
 
+                for (var i = 0; i < 8; i++)
+                {
+                    if (neighbors[i] is not null)
+                    {
+                        var neighborCell = _Cells[neighbors[i]];
+                        if (!neighborCell.WasClicked)
+                            ClickCell(neighborCell);
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Restart Game Event Handler
+    /// </summary>
     private async void OnRetryButtonClicked()
     {
         var gameStateTask = _GameManager.ResetGameStateAsync();
